@@ -47,7 +47,7 @@ namespace RIL.Api.Tests
         // [ClassCleanup()]
         // public static void MyClassCleanup() { }
         //
-        // Use TestInitialize to run code before running each test 
+        // Use TestInitialize to run code before running each test
         // [TestInitialize()]
         // public void MyTestInitialize() { }
         //
@@ -86,7 +86,6 @@ namespace RIL.Api.Tests
 
             //RILResponse responseNewUser = Api.RegisterNewUser(new Credentials("rilapitest8705", "rilapitest8705"));
             //Assert.AreEqual(responseNewUser.Status, Status.Success, "User with such name shoudl is a new.");
-            
         }
 
         [TestMethod]
@@ -115,7 +114,7 @@ namespace RIL.Api.Tests
                                                            new Item("http://google.com/3", "3")
                                                        });
             Assert.AreEqual(response.Status, Status.Success);
-        
+
             response = Api.AddNewPages("http://google.com/4", "4", "http://google.com/5", "5", "http://google.com/6", "6");
             Assert.AreEqual(response.Status, Status.Success);
         }
@@ -169,7 +168,7 @@ namespace RIL.Api.Tests
         public void UserSats()
         {
             UserStats stats = Api.Stats();
-            
+
             Assert.IsNotNull(stats);
         }
     }
