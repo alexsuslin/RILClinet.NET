@@ -43,6 +43,7 @@
       <HintPath>..\..\external\RestSharp.102.5\RestSharp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -53,6 +54,7 @@
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Config.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="API.cs" />
   </ItemGroup>
@@ -61,6 +63,9 @@
       <Project>{642E2D92-6B47-4F92-A73B-29181D0B9A31}</Project>
       <Name>RIL</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
