@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json.Linq;
+using RIL.Constants;
+using RIL.Objects;
 using RestSharp;
 using RestSharp.Deserializers;
 
@@ -215,13 +217,16 @@ namespace RIL
 
         #region Text
 
-        public PageContent GetText(string url, bool more = false, bool images = false)
+        public RILResponse<PageContent> GetText(string url, bool more = false, bool images = false)
         {
             RestRequest request = new RestRequest(Methods.GetTextOnlyVersion);
             request.AddParameter(Methods.Params.Url, url);
             request.AddParameter(Methods.Params.Mode, more ? Methods.Params.More : Methods.Params.Less);
             request.AddParameter(Methods.Params.Images, images ? 1 : 0);
-            return new PageContent(Execute(request));
+            IRestResponse response = Execute(request).Response;
+            RILResponse<PageContent> rilResponse = new RILResponse<PageContent>(response);
+            rilResponse.Data = new PageContent(rilResponse);
+            return rilResponse;
         }
 
         #endregion

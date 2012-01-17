@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using RIL.Constants;
+using RIL.Objects;
 
 namespace RIL.Api.Tests
 {
@@ -142,7 +144,7 @@ namespace RIL.Api.Tests
                                               Format = Format.Json,
                                               Page = 1,
                                               RetreiveType = RetreiveType.MyApp,
-                                              RetriveTags = RetriveTags.Yes,
+                                              retrieveTags = RetrieveTags.Yes,
                                               State = State.All,
                                               Since = DateTime.Now.AddDays(-5)
                                           };
@@ -155,8 +157,9 @@ namespace RIL.Api.Tests
         [TestMethod]
         public void RetreiveText()
         {
-            PageContent content = Api.GetText("http://google.com", false, true);
-            Assert.IsNotNull(content);
+            RILResponse<PageContent> response = Api.GetText("http://google.com", false, true);
+            Assert.AreEqual(response.Status, Status.Success);
+            Assert.IsNotNull(response.Data);
         }
     }
 }

@@ -25,7 +25,6 @@ namespace RIL
             return request;
         }
 
-
         /// <summary>
         /// Create from list of items a dictionary where key is from 0 to N.
         /// That is needed to fit json requirements for RIL.
