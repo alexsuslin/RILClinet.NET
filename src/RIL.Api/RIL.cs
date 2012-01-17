@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json.Linq;
 using RestSharp;
 using RestSharp.Deserializers;
 
@@ -8,13 +9,22 @@ namespace RIL
 {
     public class RIL
     {
+        #region Fields & Consts
+
         public const string BaseUrl = "https://readitlaterlist.com/v2/";
-        
+
         private readonly string key;
         private readonly string ApiUrl;
 
+        #endregion
+
+        #region Properties
+
         public Credentials Credentials { get; set; }
 
+        #endregion
+
+        #region Constructors
 
         public RIL(string token, Credentials credentials = null, string baseUrl = BaseUrl)
         {
@@ -24,21 +34,11 @@ namespace RIL
 
         }
 
-        private RestResponse<T> Execute<T>(RestRequest request) where T : new()
-        {
-            RestClient client = new RestClient(ApiUrl);
-            request = RequestSetup(request);
-            return client.Execute<T>(request);
-        }
-
-        private RILResponse Execute(RestRequest request, Credentials cred = null) 
-        {
-            RestClient client = new RestClient(ApiUrl);
-            request = RequestSetup(request);
-            return new RILResponse(client.Execute(request));
-        }
+        #endregion
 
         #region Methods
+
+        #region Add
 
         /// <summary>
         /// The add method is provided as a quick way to save one link to a users list. 
@@ -60,10 +60,10 @@ namespace RIL
         {
             RestRequest request = new RestRequest(Methods.AddNewPage);
             request.AddParameter(Methods.Params.Url, url);
-            if(!string.IsNullOrEmpty(title))
+            if (!string.IsNullOrEmpty(title))
                 request.AddParameter(Methods.Params.Title, title);
-            if(!string.IsNullOrEmpty(ref_id))
-            request.AddParameter(Methods.Params.RefID, ref_id);
+            if (!string.IsNullOrEmpty(ref_id))
+                request.AddParameter(Methods.Params.RefID, ref_id);
             return Execute(request);
         }
 
@@ -72,49 +72,10 @@ namespace RIL
             return AddNewPage(item.Url, item.Title, item.RefID);
         }
 
-       
-        /// <summary>
-        /// This method allows you to create a new user account.
-        /// Special Case: The 401 status code will be returned when the supplied username is already taken. 
-        /// The X-Error header will also say this in english.
-        /// </summary>
-        /// <param name="credentials">Username and Password of the user to create.</param>
-        /// <returns></returns>
-        public RILResponse RegisterNewUser(Credentials credentials)
-        {
-            RestRequest request = new RestRequest(Methods.RegisterUser);
-            return Execute(request, credentials);
-        }
+        #endregion
 
-        
-        /// <summary>
-        /// The authentication method is used to verify a supplied username and password is correct 
-        /// (for example when prompting a user for their credentials for the first time). 
-        /// It does not need to be called before using any methods below.
-        /// </summary>
-        /// <returns></returns>
-        public RILResponse Auth()
-        {
-            return Execute(new RestRequest(Methods.Authentication));
-        }
+        #region Send
 
-        public RILResponse Auth(string username, string password)
-        {
-            return Execute(new RestRequest(Methods.Authentication), new Credentials(username, password));
-        }
-
-       
-        /// <summary>
-        /// This method allows you to check your current rate limit status. 
-        /// Calls to this method do not count against the rate limit.
-        /// </summary>
-        /// <returns></returns>
-        public RILResponse ApiStatus()
-        {
-            return Execute(new RestRequest(Methods.ApiStatus));
-        }
-
-        
         /// <summary>
         /// This method allows you to make changes to a user's reading list. It supports adding new pages, 
         /// marking pages as read, changing titles, or updating tags. Multiple changes to items can be made in one request.
@@ -130,7 +91,7 @@ namespace RIL
         public RILResponse SendChanges(IList<Item> newitems, IList<Item> read, IList<Item> update_title, IList<Item> update_tags)
         {
             RestRequest request = new RestRequest(Methods.SendChangesToList);
-            if(newitems != null && newitems.Count > 0)
+            if (newitems != null && newitems.Count > 0)
                 request.AddParameter(Methods.Params.New, request.JsonSerializer.Serialize(Helper.ConvertToDictionary(newitems)));
             if (read != null && read.Count > 0)
                 request.AddParameter(Methods.Params.Read, request.JsonSerializer.Serialize(Helper.ConvertToDictionary(read)));
@@ -186,23 +147,116 @@ namespace RIL
             return UpdateTags(ConvertToList(true, items));
         }
 
-        public UserStats Stats (string format = "json")
+        #endregion
+
+        #region Get
+
+        public RILResponse<UserList> RetreiveUserList(UserListOptions options = null)
+        {
+            RestRequest request = new RestRequest(Methods.RetreiveUserList);
+            if (options != null)
+            {
+                request.AddDesrelializedObject(options);
+            }
+            return Execute<UserList>(request);
+        }
+
+        #endregion
+
+        #region Stats
+        
+        public RILResponse<UserStats> Stats(string format = "json")
         {
             RestRequest request = new RestRequest(Methods.RetreiveUserStats);
             if (format != Methods.Params.JsonFormat && format != Methods.Params.XmlFormat)
                 throw new Exception("Format should be either json or xml.");
             request.AddParameter(Methods.Params.Format, format);
-
-            UserStatsWrapper wrapper = Newtonsoft.Json.JsonConvert.DeserializeObject<UserStatsWrapper>(Execute<UserStatsWrapper>(request).Content);
-
-            // There is a bug in RestSharp
-            //UserStatsWrapper wrapper = restResponse.Data;
-            return new UserStats(wrapper.UserSince, wrapper.NumberOfItems, wrapper.NumberOfUnreadItems, wrapper.NumberOfReadItems);
+            return Execute<UserStats>(request);
         }
 
         #endregion
 
+        #region Auth
+
+        /// <summary>
+        /// The authentication method is used to verify a supplied username and password is correct 
+        /// (for example when prompting a user for their credentials for the first time). 
+        /// It does not need to be called before using any methods below.
+        /// </summary>
+        /// <returns></returns>
+        public RILResponse Auth()
+        {
+            return Execute(new RestRequest(Methods.Authentication));
+        }
+
+        public RILResponse Auth(string username, string password)
+        {
+            return Execute(new RestRequest(Methods.Authentication), new Credentials(username, password));
+        }
+
+        #endregion
+
+        #region SignUp
+
+        /// <summary>
+        /// This method allows you to create a new user account.
+        /// Special Case: The 401 status code will be returned when the supplied username is already taken. 
+        /// The X-Error header will also say this in english.
+        /// </summary>
+        /// <param name="credentials">Username and Password of the user to create.</param>
+        /// <returns></returns>
+        public RILResponse RegisterNewUser(Credentials credentials)
+        {
+            RestRequest request = new RestRequest(Methods.RegisterUser);
+            return Execute(request, credentials);
+        }
+
+        #endregion
+
+        #region Text
+
+        public PageContent GetText(string url, bool more = false, bool images = false)
+        {
+            RestRequest request = new RestRequest(Methods.GetTextOnlyVersion);
+            request.AddParameter(Methods.Params.Url, url);
+            request.AddParameter(Methods.Params.Mode, more ? Methods.Params.More : Methods.Params.Less);
+            request.AddParameter(Methods.Params.Images, images ? 1 : 0);
+            return new PageContent(Execute(request));
+        }
+
+        #endregion
+
+        #region Api
+
+        /// <summary>
+        /// This method allows you to check your current rate limit status. 
+        /// Calls to this method do not count against the rate limit.
+        /// </summary>
+        /// <returns></returns>
+        public RILResponse ApiStatus()
+        {
+            return Execute(new RestRequest(Methods.ApiStatus));
+        }
+
+        #endregion
+
+        #endregion
+
         #region Helper Methods
+
+        private RILResponse<T> Execute<T>(RestRequest request, Credentials cred = null) where T : new()
+        {
+            RestClient client = new RestClient(ApiUrl);
+            request = RequestSetup(request, cred);
+            return new RILResponse<T>(client.Execute<T>(request));
+        }
+
+        private RILResponse Execute(RestRequest request, Credentials cred = null)
+        {
+            RestClient client = new RestClient(ApiUrl);
+            request = RequestSetup(request, cred);
+            return new RILResponse(client.Execute(request));
+        }
 
         private IList<Item> ConvertToList(bool isSecondParameterTags, params string[] item)
         {

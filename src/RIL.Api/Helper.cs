@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json.Linq;
 using RestSharp;
 
 namespace RIL
@@ -12,6 +13,18 @@ namespace RIL
             Parameter p = list.FirstOrDefault(parameter => parameter.Name == name);
             return p != null ? p.Value.ToString() : null;
         }
+
+        public static IRestRequest AddDesrelializedObject<T>(this RestRequest request, T obj)
+        {
+            string serialized = request.JsonSerializer.Serialize(obj);
+            JObject deserializeObject = Newtonsoft.Json.JsonConvert.DeserializeObject<JObject>(serialized);
+            foreach (KeyValuePair<string, JToken> pair in deserializeObject)
+            {
+                request.AddParameter(pair.Key, pair.Value.Value<string>());
+            }
+            return request;
+        }
+
 
         /// <summary>
         /// Create from list of items a dictionary where key is from 0 to N.
@@ -27,10 +40,15 @@ namespace RIL
         /// </summary>
         /// <param name="items"></param>
         /// <returns></returns>
-        public static Dictionary<int, Item> ConvertToDictionary(IList<Item> items)
+        public static Dictionary<int, T> ConvertToDictionary<T>(IList<T> items)
         {
             int i = 0;
             return items.ToDictionary(item => i++);
+        }
+
+        public static IList<T> ConvertToList<T>(Dictionary<int, T> dic)
+        {
+            return dic.Select(item => item.Value).ToList();
         }
 
         public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)

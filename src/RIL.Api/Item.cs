@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 
@@ -11,8 +12,10 @@ namespace RIL
 
         [DataMember(Name = Methods.Params.Url)]
         public string Url { get; set; }
+        
         [DataMember(Name = Methods.Params.Title)]
         public string Title { get; set; }
+        
         [DataMember(Name = Methods.Params.RefID)]
         public string RefID { get; set; }
 
@@ -25,6 +28,30 @@ namespace RIL
             }
             set { AddTags(value.Split(',')); }
         }
+
+        [DataMember(Name = Methods.Params.ItemID)]
+        public int ItemID { get; set; }
+
+        [DataMember(Name = Methods.Params.TimeUpdated)]
+        protected internal double TimeUpdatedUnixFormat
+        {
+            get { return Helper.DateTimeToUnixTimeSpan(TimeUpdated); }
+            set { TimeUpdated = Helper.UnixTimeStampToDateTime(value); }
+        }
+
+        public DateTime TimeUpdated { get; set; }
+
+        [DataMember(Name = Methods.Params.TimeAdded)]
+        protected internal double TimeAddedUnixFormat
+        {
+            get { return Helper.DateTimeToUnixTimeSpan(TimeAdded); }
+            set { TimeAdded = Helper.UnixTimeStampToDateTime(value); }
+        }
+
+        public DateTime TimeAdded { get; set; }
+
+        [DataMember(Name = Methods.Params.State)]
+        public int State { get; set; }
 
         public Item (string url, string title = null, string refID = null)
         {

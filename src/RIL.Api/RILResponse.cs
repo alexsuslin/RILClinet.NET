@@ -14,26 +14,28 @@ namespace RIL
 
         #region Properties (Stats)
 
-        protected string KeyLimitReset { get; set; }
+        public string KeyLimitReset { get; set; }
 
-        protected string KeyLimitRemaining { get; set; }
+        public string KeyLimitRemaining { get; set; }
 
-        protected string KeyLimit { get; set; }
+        public string KeyLimit { get; set; }
 
-        protected string UserLimitReset { get; set; }
+        public string UserLimitReset { get; set; }
 
-        protected string UserLimitRemaining { get; set; }
+        public string UserLimitRemaining { get; set; }
 
-        protected string UserLimit { get; set; }
+        public string UserLimit { get; set; }
+
+        protected internal IRestResponse Response { get; private set; }
 
         #endregion
 
-
-        public RILResponse(RestResponse response)
+        internal RILResponse(IRestResponse response)
         {
-            Status = (Status)response.StatusCode;
+            Response = response;
+            Status = (Status) response.StatusCode;
             isOk = Status == Status.Success;
-           
+
             Error = response.Headers.GetValueByName(Header.Error);
             UserLimit = response.Headers.GetValueByName(Header.UserLimit);
             UserLimitRemaining = response.Headers.GetValueByName(Header.UserLimitRemaining);
@@ -43,4 +45,18 @@ namespace RIL
             KeyLimitReset = response.Headers.GetValueByName(Header.KeyLimitReset);
         }
     }
+
+
+    public class RILResponse<T> : RILResponse
+    {
+        internal RILResponse(IRestResponse<T> response): base(response)
+        {
+            // There is a bug in RestSharp
+            //UserStatsWrapper wrapper = restResponse.Data;
+            Data = Newtonsoft.Json.JsonConvert.DeserializeObject<T>(response.Content);
+        }
+
+        public T Data { get; private set; }
+    }
 }
+

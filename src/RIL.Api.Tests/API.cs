@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace RIL.Api.Tests
@@ -123,9 +124,39 @@ namespace RIL.Api.Tests
         [TestMethod]
         public void UserSats()
         {
-            UserStats stats = Api.Stats();
+            RILResponse<UserStats> response = Api.Stats();
+            Assert.AreEqual(response.Status, Status.Success);
+            Assert.IsNotNull(response.Data);
+        }
 
-            Assert.IsNotNull(stats);
+        [TestMethod]
+        public void RetreiveUserList()
+        {
+            RILResponse<UserList> response = Api.RetreiveUserList();
+            Assert.AreEqual(response.Status, Status.Success);
+            Assert.IsNotNull(response.Data);
+
+            UserListOptions options = new UserListOptions
+                                          {
+                                              Count = 3,
+                                              Format = Format.Json,
+                                              Page = 1,
+                                              RetreiveType = RetreiveType.MyApp,
+                                              RetriveTags = RetriveTags.Yes,
+                                              State = State.All,
+                                              Since = DateTime.Now.AddDays(-5)
+                                          };
+            response = Api.RetreiveUserList(options);
+            Assert.AreEqual(response.Status, Status.Success);
+            Assert.IsNotNull(response.Data);
+            Assert.AreEqual(response.Data.List.Count, 3);
+        }
+
+        [TestMethod]
+        public void RetreiveText()
+        {
+            PageContent content = Api.GetText("http://google.com", false, true);
+            Assert.IsNotNull(content);
         }
     }
 }

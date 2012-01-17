@@ -53,11 +53,14 @@
     <Compile Include="Helper.cs" />
     <Compile Include="Item.cs" />
     <Compile Include="Methods.cs" />
+    <Compile Include="PageContent.cs" />
     <Compile Include="RIL.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RILResponse.cs" />
     <Compile Include="Status.cs" />
     <Compile Include="Credentials.cs" />
+    <Compile Include="UserList.cs" />
+    <Compile Include="UserListOptions.cs" />
     <Compile Include="UserStats.cs" />
   </ItemGroup>
   <ItemGroup>

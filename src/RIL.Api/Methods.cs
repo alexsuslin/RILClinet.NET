@@ -1,4 +1,6 @@
-﻿namespace RIL
+﻿using RestSharp;
+
+namespace RIL
 {
     internal struct Methods
     {
@@ -13,6 +15,21 @@
 
         public struct Params
         {
+            public const string Images = "images";
+            public const string Mode = "mode";
+            public const string Less = "less";
+            public const string More = "more";
+            public const string MyAppOnly = "myAppOnly";
+            public const string Complete = "complete";
+            public const string TimeUpdated = "time_updated";
+            public const string TimeAdded = "time_added";
+            public const string State = "state";
+            public const string Count = "count";
+            public const string Page = "page";
+            public const string ItemID = "item_id";
+            public const string List = "list";
+            public const string Since = "since";
+            public const string Status = "status";
             public const string Username = "username";
             public const string Password = "password";
             public const string ApiKey = "apikey";
@@ -22,6 +39,7 @@
             public const string Tags = "tags";
             public const string New = "new";
             public const string Read = "read";
+            public const string Unread = "unread";
             public const string UpdateTitles = "update_title";
             public const string UpdateTags = "update_tags";
             public const string JsonFormat = "json";
