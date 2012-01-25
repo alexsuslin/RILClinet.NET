@@ -1,19 +1,28 @@
-﻿using Newtonsoft.Json;
-using RIL.Constants;
+﻿using RIL.Constants;
 using RestSharp;
 
 namespace RIL.Objects
 {
-    public class RILResponse
+    public interface IRILResponse
     {
-        #region Fields
+        string KeyLimitReset { get; set; }
+        string KeyLimitRemaining { get; set; }
+        string KeyLimit { get; set; }
+        string UserLimitReset { get; set; }
+        string UserLimitRemaining { get; set; }
+        string UserLimit { get; set; }
+        bool IsOk { get; }
+        Status Status { get; set; }
+        string Error { get; set; }
+    }
 
-        public readonly Status Status;
-        public readonly string Error;
-        public readonly bool isOk;
+    public interface IRILResponse<T> : IRILResponse
+    {
+        T Data { get; set; }
+    }
 
-        #endregion
-
+    public abstract class RILResponseBase
+    {
         #region Properties (Stats)
 
         public string KeyLimitReset { get; set; }
@@ -28,18 +37,19 @@ namespace RIL.Objects
 
         public string UserLimit { get; set; }
 
-        protected internal IRestResponse Response { get; private set; }
+        protected internal IRestResponse Response { get; set; }
+
+        public bool IsOk { get { return Status == Status.Success; } }
+
+        public Status Status { get; set; }
+        public string Error { get; set; }
 
         #endregion
 
-        #region Constructors
-
-        internal RILResponse(IRestResponse response)
+        protected internal RILResponseBase(IRestResponse response)
         {
             Response = response;
             Status = (Status) response.StatusCode;
-            isOk = Status == Status.Success;
-
             Error = response.Headers.GetValueByName(Header.Error);
             UserLimit = response.Headers.GetValueByName(Header.UserLimit);
             UserLimitRemaining = response.Headers.GetValueByName(Header.UserLimitRemaining);
@@ -49,32 +59,51 @@ namespace RIL.Objects
             KeyLimitReset = response.Headers.GetValueByName(Header.KeyLimitReset);
         }
 
-        #endregion
+        protected RILResponseBase()
+        {
+        }
     }
 
-
-    public class RILResponse<T> : RILResponse
+    public class RILResponse<T> : RILResponseBase, IRILResponse<T>
     {
+
+        protected internal RILResponse(IRestResponse<T> response) : base(response)
+        {
+            Data = response.Data;
+        }
+
+        protected internal RILResponse(IRestResponse response): base(response)
+        {
+        }
+
+
+        public static implicit operator RILResponse<T>(RestResponse response)
+        {
+            return new RILResponse<T>(response);
+        }
+
+        public static implicit operator RILResponse<T>(RestResponse<T> response)
+        {
+            return new RILResponse<T>(response);
+        }
+
         #region Properties
 
-        public T Data { get; protected internal set; }
+        public T Data { get; set; }
 
         #endregion
 
-        #region Constructors
+    }
 
-        internal RILResponse(IRestResponse<T> response) : base(response)
-        {
-            // There is a bug in RestSharp
-            //UserStatsWrapper wrapper = restResponse.Data;
-            Data = JsonConvert.DeserializeObject<T>(response.Content);
-        }
-
-        protected internal RILResponse(IRestResponse response) : base(response)
+    public class RILResponse : RILResponseBase, IRILResponse
+    {
+        protected internal RILResponse(IRestResponse response):base(response)
         {
         }
 
-        #endregion
+        public static implicit operator RILResponse(RestResponse response)
+        {
+            return new RILResponse(response);
+        }
     }
 }
-

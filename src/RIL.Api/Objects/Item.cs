@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using Newtonsoft.Json;
 using RIL.Constants;
+using RIL.Objects.JsonUtilities;
 
 namespace RIL.Objects
 {
@@ -16,13 +18,6 @@ namespace RIL.Objects
         #endregion
 
         #region Properties
-
-        [DataMember(Name = Methods.Params.TimeUpdated)]
-        protected internal double TimeUpdatedUnixFormat
-        {
-            get { return Helper.DateTimeToUnixTimeSpan(TimeUpdated); }
-            set { TimeUpdated = Helper.UnixTimeStampToDateTime(value); }
-        }
 
         [DataMember(Name = Methods.Params.TimeAdded)]
         protected internal double TimeAddedUnixFormat
@@ -53,6 +48,7 @@ namespace RIL.Objects
         [DataMember(Name = Methods.Params.State)]
         public int State { get; set; }
 
+        [DataMember(Name = Methods.Params.TimeUpdated), JsonConverter(typeof(UnixDateTimeConverter))]
         public DateTime TimeUpdated { get; set; }
 
         public DateTime TimeAdded { get; set; }

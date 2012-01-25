@@ -26,15 +26,15 @@ namespace RIL.Api.Tests
         [TestMethod]
         public void ApiStatus()
         {
-            Assert.AreEqual(Api.ApiStatus().isOk, true);
-            Assert.AreEqual(new RIL("INVALID API KEY", new Credentials(Config.Username, Config.Password)).ApiStatus().isOk, false);
+            Assert.AreEqual(Api.ApiStatus().IsOk, true);
+            Assert.AreEqual(new RIL("INVALID API KEY", new Credentials(Config.Username, Config.Password)).ApiStatus().IsOk, false);
         }
 
         [TestMethod]
         public void AddNewPage()
         {
             RILResponse response = Api.AddNewPage("http://google.com", "test");
-            Assert.AreEqual(response.isOk, true);
+            Assert.AreEqual(response.IsOk, true);
         }
 
         [TestMethod]

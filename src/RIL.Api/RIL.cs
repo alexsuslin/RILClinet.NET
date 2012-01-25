@@ -4,6 +4,7 @@ using System.Linq;
 using Newtonsoft.Json.Linq;
 using RIL.Constants;
 using RIL.Objects;
+using RIL.Objects.JsonUtilities;
 using RestSharp;
 using RestSharp.Deserializers;
 
@@ -223,7 +224,7 @@ namespace RIL
             request.AddParameter(Methods.Params.Url, url);
             request.AddParameter(Methods.Params.Mode, more ? Methods.Params.More : Methods.Params.Less);
             request.AddParameter(Methods.Params.Images, images ? 1 : 0);
-            IRestResponse response = Execute(request).Response;
+            IRestResponse response = Execute(request);
             RILResponse<PageContent> rilResponse = new RILResponse<PageContent>(response);
             rilResponse.Data = new PageContent(rilResponse);
             return rilResponse;
@@ -249,18 +250,18 @@ namespace RIL
 
         #region Helper Methods
 
-        private RILResponse<T> Execute<T>(RestRequest request, Credentials cred = null) where T : new()
+        private RestResponse<T> Execute<T>(RestRequest request, Credentials cred = null) where T : new()
         {
             RestClient client = new RestClient(ApiUrl);
-            request = RequestSetup(request, cred);
-            return new RILResponse<T>(client.Execute<T>(request));
+            request = Setup(client, request, cred);
+            return client.Execute<T>(request);
         }
 
-        private RILResponse Execute(RestRequest request, Credentials cred = null)
+        private RestResponse Execute(RestRequest request, Credentials cred = null)
         {
             RestClient client = new RestClient(ApiUrl);
-            request = RequestSetup(request, cred);
-            return new RILResponse(client.Execute(request));
+            request = Setup(client, request, cred);
+            return client.Execute(request);
         }
 
         private IList<Item> ConvertToList(bool isSecondParameterTags, params string[] item)
@@ -280,12 +281,17 @@ namespace RIL
             return items;
         }
 
-        private RestRequest RequestSetup(RestRequest request, Credentials cred = null)
+        private RestRequest Setup(RestClient client, RestRequest request, Credentials cred = null)
         {
             request.Resource = !request.Resource.EndsWith(".php") ? string.Format("{0}.php", request.Resource) : request.Resource;
             request.Method = Method.POST;
             request.RequestFormat = DataFormat.Json;
             request.AddParameter(Methods.Params.ApiKey, key, ParameterType.GetOrPost);
+
+            client.AddHandler("application/json", new ApiJsonDeserializer());
+            client.AddHandler("text/json", new ApiJsonDeserializer());
+            client.AddHandler("text/x-json", new ApiJsonDeserializer());
+            client.AddHandler("text/javascript", new ApiJsonDeserializer());
 
             cred = cred ?? Credentials;
 

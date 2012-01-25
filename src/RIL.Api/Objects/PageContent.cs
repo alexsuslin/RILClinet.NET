@@ -20,7 +20,8 @@ namespace RIL.Objects
 
         #region Constructors
 
-        internal PageContent(RILResponse execute)
+        //to do
+        internal PageContent(RILResponse<PageContent> execute)
         {
             Content = execute.Response.Content;
             PossibleTitle = execute.Response.Headers.GetValueByName(Header.Title);

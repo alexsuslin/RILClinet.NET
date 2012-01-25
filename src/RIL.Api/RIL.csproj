@@ -42,13 +42,9 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Objects\JsonUtilities\ApiJsonDeserializer.cs" />
     <Compile Include="Constants\Format.cs" />
     <Compile Include="Constants\Header.cs" />
     <Compile Include="Constants\RetrieveTags.cs" />
@@ -58,6 +54,8 @@
     <Compile Include="Helper.cs" />
     <Compile Include="Objects\Item.cs" />
     <Compile Include="Constants\Methods.cs" />
+    <Compile Include="Objects\JsonUtilities\CustomDateTimeConverter.cs" />
+    <Compile Include="Objects\JsonUtilities\UnixDateTimeConverter.cs" />
     <Compile Include="Objects\PageContent.cs" />
     <Compile Include="RIL.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -62,5 +62,40 @@ namespace RIL
             DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);
             return (dateTime - dtDateTime).TotalSeconds;
         }
+
+        #region Newtonsoft.Json/Utilities
+
+        public static bool IsNullable(Type t)
+        {
+            ArgumentNotNull(t, "t");
+
+            if (t.IsValueType)
+                return IsNullableType(t);
+
+            return true;
+        }
+
+        public static bool IsNullableType(Type t)
+        {
+            ArgumentNotNull(t, "t");
+
+            return (t.IsGenericType && t.GetGenericTypeDefinition() == typeof (Nullable<>));
+        }
+
+        public static void ArgumentNotNull(object value, string parameterName)
+        {
+            if (value == null)
+                throw new ArgumentNullException(parameterName);
+        }
+
+        public static string FormatWith(this string format, IFormatProvider provider, params object[] args)
+        {
+            ArgumentNotNull(format, "format");
+
+            return string.Format(provider, format, args);
+        }
+
+        #endregion
+
     }
 }
