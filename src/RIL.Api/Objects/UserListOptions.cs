@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using Newtonsoft.Json;
 using RIL.Constants;
+using RIL.Objects.JsonUtilities;
 
 namespace RIL.Objects
 {
@@ -8,12 +10,6 @@ namespace RIL.Objects
     public class UserListOptions
     {
         #region Properties
-
-        [DataMember(Name = Methods.Params.Format)]
-        protected internal string FormatParameter
-        {
-            get { return Format == Format.Xml ? Methods.Params.XmlFormat : Methods.Params.JsonFormat; }
-        }
 
         [DataMember(Name = Methods.Params.State)]
         protected internal string StateParameter
@@ -48,8 +44,9 @@ namespace RIL.Objects
         public int Page { get; set; }
 
         [DataMember(Name = Methods.Params.Tags)]
-        public RetrieveTags retrieveTags { get; set; }
+        protected internal int retrieveTags { get; set; }
 
+        [DataMember(Name = Methods.Params.Format), JsonConverter(typeof(ApiEnumConverter))]
         public Format Format { get; set; }
 
         public DateTime Since { get; set; }
@@ -57,6 +54,8 @@ namespace RIL.Objects
         public State State { get; set; }
 
         public RetreiveType RetreiveType { get; set; }
+
+        public RetrieveTags RetrieveTags { get { return (RetrieveTags)retrieveTags; } set { retrieveTags = (int) value; } }
 
         #endregion
 

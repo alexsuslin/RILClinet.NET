@@ -44,6 +44,7 @@
     <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EnumValueAttribute.cs" />
     <Compile Include="Objects\JsonUtilities\ApiJsonDeserializer.cs" />
     <Compile Include="Constants\Format.cs" />
     <Compile Include="Constants\Header.cs" />
@@ -55,6 +56,9 @@
     <Compile Include="Objects\Item.cs" />
     <Compile Include="Constants\Methods.cs" />
     <Compile Include="Objects\JsonUtilities\CustomDateTimeConverter.cs" />
+    <Compile Include="Objects\JsonUtilities\ApiEnumConverter.cs" />
+    <Compile Include="Objects\JsonUtilities\ObjectsArrayConverter.cs" />
+    <Compile Include="Objects\JsonUtilities\StingArrayConverter.cs" />
     <Compile Include="Objects\JsonUtilities\UnixDateTimeConverter.cs" />
     <Compile Include="Objects\PageContent.cs" />
     <Compile Include="RIL.cs" />

@@ -2,7 +2,7 @@
 {
     public enum RetrieveTags
     {
-        Yes,
-        No
+        Yes = 1,
+        No = 0
     }
 }

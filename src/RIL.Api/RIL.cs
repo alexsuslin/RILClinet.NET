@@ -273,7 +273,7 @@ namespace RIL
             {
                 Item listItems = new Item(item[i]);
                 if (isSecondParameterTags)
-                    listItems.Tags = item[i + 1];
+                    listItems.Tags = item[i + 1].Split(',').ToList();
                 else
                     listItems.Title = item[i + 1];
                 items.Add(listItems);

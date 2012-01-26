@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using Newtonsoft.Json.Linq;
 using RestSharp;
 
@@ -45,7 +48,7 @@ namespace RIL
             return items.ToDictionary(item => i++);
         }
 
-        public static IList<T> ConvertToList<T>(Dictionary<int, T> dic)
+        public static IList<T> ConvertToList<T>(IDictionary<object, T> dic)
         {
             return dic.Select(item => item.Value).ToList();
         }
@@ -61,6 +64,18 @@ namespace RIL
         {
             DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);
             return (dateTime - dtDateTime).TotalSeconds;
+        }
+
+        public static string GetEnumStringValue(Enum value)
+        {
+            string output = null;
+            Type type = value.GetType();
+            FieldInfo fi = type.GetField(value.ToString());
+            EnumValueAttribute[] attrs = fi.GetCustomAttributes(typeof(EnumValueAttribute), false) as EnumValueAttribute[];
+            if (attrs != null && attrs.Length > 0)
+                output = attrs[0].Value;
+
+            return output;
         }
 
         #region Newtonsoft.Json/Utilities

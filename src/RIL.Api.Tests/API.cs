@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RIL.Constants;
 using RIL.Objects;
@@ -98,9 +100,9 @@ namespace RIL.Api.Tests
         {
             RILResponse response = Api.UpdateTags(new List<Item>
                                                        {
-                                                           new Item("http://google.com/1", "1 - updated") {Tags = "tag1, tag2, tag3"},
-                                                           new Item("http://google.com/2", "2 - updated") {Tags = "tag1, tag2, tag3"},
-                                                           new Item("http://google.com/3", "3 - updated") {Tags = "tag1, tag2, tag3"}
+                                                           new Item("http://google.com/1", "1 - updated") {Tags = "tag1, tag2, tag3".Split(',').ToList()},
+                                                           new Item("http://google.com/2", "2 - updated") {Tags = "tag1, tag2, tag3".Split(',').ToList()},
+                                                           new Item("http://google.com/3", "3 - updated") {Tags = "tag1, tag2, tag3".Split(',').ToList()}
                                                        });
             Assert.AreEqual(response.Status, Status.Success);
 
@@ -144,7 +146,7 @@ namespace RIL.Api.Tests
                                               Format = Format.Json,
                                               Page = 1,
                                               RetreiveType = RetreiveType.MyApp,
-                                              retrieveTags = RetrieveTags.Yes,
+                                              RetrieveTags = RetrieveTags.Yes,
                                               State = State.All,
                                               Since = DateTime.Now.AddDays(-5)
                                           };

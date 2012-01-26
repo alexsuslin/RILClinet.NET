@@ -11,20 +11,7 @@ namespace RIL.Objects
     [DataContract]
     public class Item
     {
-        #region Fields
-
-        private readonly IList<string> tagmas;
-
-        #endregion
-
         #region Properties
-
-        [DataMember(Name = Methods.Params.TimeAdded)]
-        protected internal double TimeAddedUnixFormat
-        {
-            get { return Helper.DateTimeToUnixTimeSpan(TimeAdded); }
-            set { TimeAdded = Helper.UnixTimeStampToDateTime(value); }
-        }
 
         [DataMember(Name = Methods.Params.Url)]
         public string Url { get; set; }
@@ -35,12 +22,8 @@ namespace RIL.Objects
         [DataMember(Name = Methods.Params.RefID)]
         public string RefID { get; set; }
 
-        [DataMember(Name = Methods.Params.Tags)]
-        public string Tags
-        {
-            get { return tagmas.Aggregate(string.Empty, (current, tagma) => current + (tagma + ',')).TrimEnd(','); }
-            set { AddTags(value.Split(',')); }
-        }
+        [DataMember(Name = Methods.Params.Tags), JsonConverter(typeof (StringArrayConverter))]
+        public List<string> Tags { get; set; }
 
         [DataMember(Name = Methods.Params.ItemID)]
         public int ItemID { get; set; }
@@ -51,6 +34,7 @@ namespace RIL.Objects
         [DataMember(Name = Methods.Params.TimeUpdated), JsonConverter(typeof(UnixDateTimeConverter))]
         public DateTime TimeUpdated { get; set; }
 
+        [DataMember(Name = Methods.Params.TimeAdded), JsonConverter(typeof(UnixDateTimeConverter))]
         public DateTime TimeAdded { get; set; }
 
         #endregion
@@ -62,19 +46,6 @@ namespace RIL.Objects
             Url = url;
             Title = title;
             RefID = refID;
-            tagmas = new List<string>();
-        }
-
-        #endregion
-
-        #region Helper Methods
-
-        public void AddTags(params string[] tags2add)
-        {
-            foreach (string tag in tags2add)
-            {
-                tagmas.Add(tag);
-            }
         }
 
         #endregion
