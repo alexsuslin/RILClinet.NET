@@ -93,15 +93,19 @@ namespace RIL
         /// <returns></returns>
         public RILResponse SendChanges(IList<Item> newitems, IList<Item> read, IList<Item> update_title, IList<Item> update_tags)
         {
+            return SendChanges(new SendChangesParams
+                                   {
+                                       NewItems = newitems, 
+                                       ReadItems = read, 
+                                       UpdateTags = update_tags, 
+                                       UpdateTitles = update_title
+                                   });
+        }
+
+        public RILResponse SendChanges(SendChangesParams sendParams)
+        {
             RestRequest request = new RestRequest(Methods.SendChangesToList);
-            if (newitems != null && newitems.Count > 0)
-                request.AddParameter(Methods.Params.New, request.JsonSerializer.Serialize(Helper.ConvertToDictionary(newitems)));
-            if (read != null && read.Count > 0)
-                request.AddParameter(Methods.Params.Read, request.JsonSerializer.Serialize(Helper.ConvertToDictionary(read)));
-            if (update_title != null && update_title.Count > 0)
-                request.AddParameter(Methods.Params.UpdateTitles, request.JsonSerializer.Serialize(Helper.ConvertToDictionary(update_title)));
-            if (update_tags != null && update_tags.Count > 0)
-                request.AddParameter(Methods.Params.UpdateTags, request.JsonSerializer.Serialize(Helper.ConvertToDictionary(update_tags)));
+            request.AddDesrelializedObject(sendParams);
             return Execute(request);
         }
 

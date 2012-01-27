@@ -1,10 +1,12 @@
-﻿namespace RIL.Constants
+﻿using System.Runtime.Serialization;
+
+namespace RIL.Constants
 {
     public enum Format
     {
-        [EnumValue(Methods.Params.JsonFormat)]
+        [EnumMember(Value = Methods.Params.JsonFormat)]
         Json,
-        [EnumValue(Methods.Params.XmlFormat)]
+        [EnumMember(Value = Methods.Params.XmlFormat)]
         Xml
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using Newtonsoft.Json;
 using RIL.Constants;
+using RIL.Objects.JsonUtilities;
 
 namespace RIL.Objects
 {
@@ -8,13 +10,6 @@ namespace RIL.Objects
     public class UserStats
     {
         #region Properties
-
-        [DataMember(Name = Methods.Params.UserSince)]
-        protected internal double UserSinceUnixFormat
-        {
-            get { return Helper.DateTimeToUnixTimeSpan(UserSince); }
-            set { UserSince = Helper.UnixTimeStampToDateTime(value); }
-        }
 
         [DataMember(Name = Methods.Params.CountUnreadItems)]
         public int NumberOfUnreadItems { get; set; }
@@ -25,6 +20,7 @@ namespace RIL.Objects
         [DataMember(Name = Methods.Params.CountReadItems)]
         public int NumberOfReadItems { get; set; }
 
+        [DataMember(Name = Methods.Params.UserSince), JsonConverter(typeof(UnixDateTimeConverter))]
         public DateTime UserSince { get; set; }
 
         #endregion

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RIL.Constants;
 using RIL.Objects;
@@ -45,7 +44,7 @@ namespace RIL.Api.Tests
             RILResponse responseExistingUser = Api.RegisterNewUser(new Credentials(Config.Username, Config.Password));
             Assert.AreEqual(responseExistingUser.Status, Status.IncorrectCredentials, "User with such name shoudl exists");
 
-            //RILResponse responseNewUser = Api.RegisterNewUser(new Credentials("rilapitest8705", "rilapitest8705"));
+            //RILResponse responseNewUser = Api.RegisterNewUser(new Credentials("rilapitest87054", "rilapitest87054"));
             //Assert.AreEqual(responseNewUser.Status, Status.Success, "User with such name shoudl is a new.");
         }
 

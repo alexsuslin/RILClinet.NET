@@ -20,7 +20,7 @@ namespace RIL.Objects
 
         #region Constructors
 
-        //to do
+        //todo
         internal PageContent(RILResponse<PageContent> execute)
         {
             Content = execute.Response.Content;
